@@ -1,0 +1,50 @@
+const CustomerModel= require('../models/customer.model');
+const OrderModel= require('../models/order.model');
+const ObjectID = require('mongoose').Types.ObjectId;
+const mongoose = require("mongoose");
+const Menu =  require('../models/menu.model');
+
+module.exports.getAllCustomer = (req, res) => {
+    CustomerModel.find(req.params, (err, docs)=>{
+        if(!err)
+            res.send(docs);
+        else 
+            console.log("error: " + err);
+    }).select();
+}
+
+module.exports.createCustomer = (req, res) => {
+    const newCustomer = new CustomerModel({
+        _id: new mongoose.Types.ObjectId(),
+        name_customer : req.body.name_customer,
+        type_customer : req.body.type_customer,
+        drink_preference : [],
+        food_preference : []
+    }
+    );
+    console.log(req.body);
+
+    newCustomer.save((err, docs) => {
+        if (err) return handleError(err);
+        res.send(docs);    
+    })
+}
+
+module.exports.customerInfo = (req, res) => {
+    if(!ObjectID.isValid(req.params.id))
+        return res.status(400).send('ID unknown : ' + req.params.id)
+    
+    CustomerModel.findById(req.params.id, (err, docs) => {
+        if(!err) res.send(docs);
+        else console.log('ID unknown : ' + err);
+    }).select();
+}
+
+module.exports.typeInfo = (req, res) => {
+    
+    CustomerModel.find(req.query, (err, docs) => {
+        if(!err) res.send(docs);
+        else console.log('unknown g : ' + err);
+    }).select();
+    
+}
