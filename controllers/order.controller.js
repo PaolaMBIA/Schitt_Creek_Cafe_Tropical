@@ -2,6 +2,8 @@ const OrderModel= require('../models/order.model');
 const ObjectID = require('mongoose').Types.ObjectId;
 const mongoose = require("mongoose");
 
+let date = new Date();
+date.setHours(date.getHours()-144);
 
 module.exports.getAllorder = (req, res) => {
     OrderModel.find((err, docs)=>{
@@ -129,9 +131,11 @@ module.exports.dinerInfo = (req, res) => {
         },
         {
             $project : {   
-                total: {$sum: "$menu_item.priceFood" },    
+                total: {$sum: "$menu_item.priceFood" }, 
+                createdAt: {$dateToString: {'format': '%Y-%m-%d à %Hh%M', 'date': '$createdAt'}}  
             }
         },
+
         // {
         //     $count: "nbr_order",
         // },

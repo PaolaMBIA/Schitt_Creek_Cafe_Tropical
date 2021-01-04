@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, {useRef, useState } from 'react';
 import Select from 'react-select';
+import Home from '../../pages/Home';
 import {StyleAddOrder} from '../../styles/styled-components/StyleAddOrder';
 
 const axios = require('axios').default;
@@ -11,12 +12,14 @@ const options = [
 ];
 
 const Bill = ({TheOrderId}) => {
+    const div = useRef(null);
     const [feedback, setFeedback] = useState("");
     const [splitBill, setSplitBill] = useState("");
     const [state, setState] = useState({total: []});
 
     const [billTrue, setBillTrue] = useState(false);
     const [totalBi, setTotalBi] = useState(true);
+    const [home, setHome] = useState(false);
 
     function open(){
         setBillTrue(true);
@@ -56,7 +59,8 @@ const Bill = ({TheOrderId}) => {
                 alert("problem!!");
             }
             else{
-                alert("thank for order");
+                setHome(true);
+                div.current.style.display = 'none';
             }
         }).catch((err)=>{
             console.log(err);
@@ -69,7 +73,8 @@ const Bill = ({TheOrderId}) => {
     }
 
     return(
-        <StyleAddOrder>
+        <div>
+        <StyleAddOrder ref={div}>
             {
                 billTrue &&
                     <div>
@@ -80,7 +85,7 @@ const Bill = ({TheOrderId}) => {
                                     {
                                         state.total.map(totalB => 
                                             <div>
-                                                <h5>$<strong>{totalB.totalBill}</strong></h5>
+                                                <h5>${totalB.totalBill}</h5>
                                             </div>
                                         )
                                     }
@@ -120,6 +125,14 @@ const Bill = ({TheOrderId}) => {
                 
             }
         </StyleAddOrder>
+        <div>
+            {
+                home &&
+                <Home/>
+            }
+        </div>
+
+        </div>
     );
 };
 

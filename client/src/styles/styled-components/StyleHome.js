@@ -7,7 +7,7 @@ h3{
     color: darkred;
 }
 
-.container{
+.contain{
     display: flex;
     flex-wrap: wrap;
     justify-content: center;

@@ -68,7 +68,7 @@ const Home = () => {
                 homeTrue && 
                 <StyleHome>
                     <h3>ROOM</h3>
-                    <div className="container">
+                    <div className="contain">
                         <div className="table">
                             <img src={table}  ref={buttonOpen} alt="table"/>
                             <h5>Table 1</h5>
