@@ -25,6 +25,7 @@ const Bill = ({TheOrderId}) => {
         setBillTrue(true);
         setTotalBi(false);
 
+        //get the total bill
         axios({
             method: "get",
             url: `${process.env.REACT_APP_API_URL}api/order/total/${TheOrderId}`,
@@ -43,6 +44,7 @@ const Bill = ({TheOrderId}) => {
     function EndOrder(e) {
         e.preventDefault();
 
+        //update the created order by adding the bill and feedback
         axios({
             method: "put",
             url: `${process.env.REACT_APP_API_URL}api/order/${TheOrderId}`,
@@ -67,6 +69,7 @@ const Bill = ({TheOrderId}) => {
         })
     }
 
+    //changing the split bill state
     const handleChange = splitBill =>{
         setSplitBill(splitBill);
         console.log(splitBill.value);
@@ -76,6 +79,7 @@ const Bill = ({TheOrderId}) => {
         <div>
         <StyleAddOrder ref={div}>
             {
+                //appears after click on "Click here to see the total of bill"
                 billTrue &&
                     <div>
                         <div className="containeur">
@@ -118,6 +122,7 @@ const Bill = ({TheOrderId}) => {
                     </div>
             } 
             {
+                //main screen
                 totalBi &&
                 <div className="buttonTotalBill">
                     <button id ="buttonTotal" onClick={open}>Click here to see the total of bill</button>
@@ -127,6 +132,7 @@ const Bill = ({TheOrderId}) => {
         </StyleAddOrder>
         <div>
             {
+                //return to home page when we submit the bill
                 home &&
                 <Home/>
             }

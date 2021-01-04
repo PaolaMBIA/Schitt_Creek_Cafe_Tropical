@@ -4,6 +4,7 @@ const ObjectID = require('mongoose').Types.ObjectId;
 const mongoose = require("mongoose");
 const Menu =  require('../models/menu.model');
 
+//get all the customer
 module.exports.getAllCustomer = (req, res) => {
     CustomerModel.find(req.params, (err, docs)=>{
         if(!err)
@@ -13,6 +14,7 @@ module.exports.getAllCustomer = (req, res) => {
     }).select();
 }
 
+//insert new customer
 module.exports.createCustomer = (req, res) => {
     const newCustomer = new CustomerModel({
         _id: new mongoose.Types.ObjectId(),
@@ -30,6 +32,7 @@ module.exports.createCustomer = (req, res) => {
     })
 }
 
+//get customer's info
 module.exports.customerInfo = (req, res) => {
     if(!ObjectID.isValid(req.params.id))
         return res.status(400).send('ID unknown : ' + req.params.id)
@@ -40,6 +43,7 @@ module.exports.customerInfo = (req, res) => {
     }).select();
 }
 
+//get the query data
 module.exports.typeInfo = (req, res) => {
     
     CustomerModel.find(req.query, (err, docs) => {

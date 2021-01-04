@@ -3,6 +3,7 @@ import {StyleModal} from '../../styles/styled-components/StyleModal';
 
 export default function Modal(props) {
     const [number, setNumber] = useState("");
+
     function close() {
         props.modalElement.current.style.display = 'none';
     }

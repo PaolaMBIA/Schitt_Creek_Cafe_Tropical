@@ -57,7 +57,7 @@ const Home = () => {
     return(
         <div>
             {
-                //is displayed after entering the number of customers
+                //appears after entering the number of customers
                 homeFalse &&
                 <div >
                     {/* { Add order ID as a props to associate the customer with the order */

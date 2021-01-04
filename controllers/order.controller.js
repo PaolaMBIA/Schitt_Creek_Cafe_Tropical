@@ -2,9 +2,11 @@ const OrderModel= require('../models/order.model');
 const ObjectID = require('mongoose').Types.ObjectId;
 const mongoose = require("mongoose");
 
+
 let date = new Date();
 date.setHours(date.getHours()-144);
 
+//get all the order
 module.exports.getAllorder = (req, res) => {
     OrderModel.find((err, docs)=>{
         if(!err)
@@ -14,6 +16,7 @@ module.exports.getAllorder = (req, res) => {
     })
 }
 
+//insert new order
 module.exports.createOrder = (req, res)=> {
     const newOrder = new OrderModel({
         _id: new mongoose.Types.ObjectId(),
@@ -29,6 +32,7 @@ module.exports.createOrder = (req, res)=> {
     })
 }
 
+//patch customer's order
 module.exports.menuAdd = (req, res) => {
     if(!ObjectID.isValid(req.params.id))
         return res.status(400).send('ID unknown : ' + req.params.id)
@@ -61,6 +65,8 @@ module.exports.menuAdd = (req, res) => {
         return res.status(400).send(err);
     }
 }
+
+//update order
 module.exports.updateOrder = (req, res) => {
     if (!ObjectID.isValid(req.params.id))
       return res.status(400).send("ID unknown : " + req.params.id);
@@ -81,6 +87,7 @@ module.exports.updateOrder = (req, res) => {
     );
 };
 
+//get order's info
 module.exports.orderInfo = (req, res) => {
     if(!ObjectID.isValid(req.params.id))
         return res.status(400).send('ID unknown : ' + req.params.id)
@@ -91,6 +98,7 @@ module.exports.orderInfo = (req, res) => {
     }).select();
 };
 
+//get the total bill
 module.exports.totalBill = (req, res) => {
     if(!ObjectID.isValid(req.params.id))
         return res.status(400).send('ID unknown : ' + req.params.id)
@@ -121,6 +129,7 @@ module.exports.totalBill = (req, res) => {
     })
 };
 
+//get all the 8-rated overcooked diner did serve in the last 144 hours
 module.exports.dinerInfo = (req, res) => {
     OrderModel.aggregate([
         {
