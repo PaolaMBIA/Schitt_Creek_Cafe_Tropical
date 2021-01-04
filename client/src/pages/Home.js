@@ -1,12 +1,16 @@
 import React, {useRef, useState} from 'react';
-import Modal from '../components/compo/Modal';
-import table from '../styles/assets/table.jpg';
-import AddCustomers from "../components/compo/AddCustomers";
-import '../styles/sass/style.scss';
-
-import {StyleHome} from '../styles/styled-components/StyleHome';
-
 import axios from 'axios';
+
+//import components
+import Modal from '../components/compo/Modal';
+import AddCustomers from "../components/compo/AddCustomers";
+
+//import image
+import table from '../styles/assets/table.jpg';
+
+//import style
+import '../styles/sass/style.scss';
+import {StyleHome} from '../styles/styled-components/StyleHome';
 
 
 const Home = () => {
@@ -23,14 +27,15 @@ const Home = () => {
 
     function addNumber(e) {
         e.preventDefault();
-        console.log('Add number !!', e.target.number.value);
         number = e.target.number.value;
 
         modalElement.current.style.display = 'none';
+
         sethomeTrue(false);
         setnumberAdd(false);
         sethomeFalse(true);
 
+        // post the number of customer and create the order in database
         axios({
             method: "post",
             url: `${process.env.REACT_APP_API_URL}api/order/`,
@@ -52,9 +57,10 @@ const Home = () => {
     return(
         <div>
             {
+                //is displayed after entering the number of customers
                 homeFalse &&
                 <div >
-                    {
+                    {/* { Add order ID as a props to associate the customer with the order */
                         state.newOrder.map(or => 
                             <AddCustomers 
                                 key={or.toString()}
@@ -65,6 +71,7 @@ const Home = () => {
                 </div> 
             }
             {
+                //main screen
                 homeTrue && 
                 <StyleHome>
                     <h3>ROOM</h3>
@@ -93,7 +100,7 @@ const Home = () => {
                 </StyleHome>
             }
 
-            {
+            {/*  modal screen for add the number of customer */
                 numberAdd && 
                 <StyleHome>
                     <div id="numberModal" ref={modalElement}>

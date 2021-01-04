@@ -6,6 +6,7 @@ import {StyleAddOrder} from '../../styles/styled-components/StyleAddOrder';
 
 const axios = require('axios').default;
 
+//value for cooking level
 const options = [
     {value: 1, label: 'level 1'},
     {value: 2, label: 'level 2'},
@@ -19,6 +20,7 @@ const options = [
     {value: 10, label: 'level 10'},
 ];
 
+//value for the customer's tone
 const optionsTone = [
     {value: 'Angry', label: 'Angry'},
     {value: 'Happy', label: 'Happy'},
@@ -56,6 +58,7 @@ const AddOrders = ({TheOrderId, TheCustomerId}) => {
     function addOrder(e) {
         e.preventDefault();
         
+        //patch the order item into the order
         axios({
             method: "patch",
             url: `${process.env.REACT_APP_API_URL}api/order/add-order/${TheOrderId}`,
@@ -81,11 +84,13 @@ const AddOrders = ({TheOrderId, TheCustomerId}) => {
         })
     }
 
+    //changing the cooking level state
     const handleChange = levelCookedness =>{
         setLevelCookedness(levelCookedness);
         console.log(levelCookedness.value);
     }
 
+    //changing the tone state
     const handleChangeTone = tone =>{
         setTone(tone);
         console.log(tone.value);
@@ -94,6 +99,7 @@ const AddOrders = ({TheOrderId, TheCustomerId}) => {
     return(
         <StyleAddOrder>
             {
+                //appears when we want to add another customer in the order
                 orderFalse &&
                 <div >
                     {
@@ -105,6 +111,7 @@ const AddOrders = ({TheOrderId, TheCustomerId}) => {
                 </div> 
             }
             {
+                //main screen 
                 orderTrue &&
                     <div>
                         <div className="containeur">
@@ -186,8 +193,9 @@ const AddOrders = ({TheOrderId, TheCustomerId}) => {
                     </div>
             } 
             {
+                //appears when we click on "bill"
                 bill &&
-                <Bill TheOrderId = {TheOrderId} PriceFood = {priceFood} PriceDrink={priceDrink}/>
+                <Bill TheOrderId = {TheOrderId} />
             }
         </StyleAddOrder>
     );

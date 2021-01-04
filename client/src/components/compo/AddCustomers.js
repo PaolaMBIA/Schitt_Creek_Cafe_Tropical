@@ -18,7 +18,7 @@ const AddCustomers = ({TheOrderId}) => {
 
     function addCustomer(e) {
         e.preventDefault();
-        
+        // post the customer's name and type in database
         axios({
             method: "post",
             url: `${process.env.REACT_APP_API_URL}api/customer/`,
@@ -42,6 +42,7 @@ const AddCustomers = ({TheOrderId}) => {
         setOrderButton(true);
     }
 
+    //change state
     function open(){
         setAddCustomer(false);
         setOrderButton(false);
@@ -51,6 +52,7 @@ const AddCustomers = ({TheOrderId}) => {
     return(
         <StyleAddCustomers>
             {
+                //add name and type of customer
                 addCustomers &&
                 <div className="container">
                 <h4>New customer</h4>
@@ -78,12 +80,14 @@ const AddCustomers = ({TheOrderId}) => {
                     </div>
                 </form>
                 {
+                    //is show when the customer was add
                     orderButton && 
                     <div id="bout"><button className="button1" onClick={open}>Associate an order</button></div>
                 }
             </div>               
             }
             {
+                //is show when we click on "associate an order"
                 addOrder && 
                 state.newCustomer.map(cus => 
                     <AddOrders

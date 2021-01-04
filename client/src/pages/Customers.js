@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import {StyleAddCustomers} from '../styles/styled-components/StyleAddCustomers';
-
 import axios from 'axios';
+
+//import style
+import {StyleAddCustomers} from '../styles/styled-components/StyleAddCustomers';
 
 
 const api = axios.create({
     baseURL: `${process.env.REACT_APP_API_URL}api/customer/search`
 })
 
-export default function Customers(props) {
+export default function Customers() {
     const [state, setState] = useState({customers: []});
     // const [name, setName] = useState("");
     const [type, setType] = useState("");
@@ -17,15 +18,16 @@ export default function Customers(props) {
     const addCustomer = async (e) =>{
         e.preventDefault();
         
+        //query data from database
         try {
             let data = await api.get('', {
-            params: {
-                type_customer: type,          
-            },
-        }).then(({data}) => data);
+                params: {
+                    type_customer: type,          
+                },
+            }).then(({data}) => data);
 
-        setState({customers: data});
-        console.log(data);
+            setState({customers: data});
+            console.log(data);
         } catch(err){
             console.log(err);
         }
@@ -59,6 +61,7 @@ export default function Customers(props) {
             <div className="results">
                 <h4>Results</h4> 
                 <div> 
+                    {/* show query results */}
                     <table>
                         <thead>
                             <tr>

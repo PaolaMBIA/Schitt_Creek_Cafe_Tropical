@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+
+//import style
 import {StyleAddOrder} from '../styles/styled-components/StyleAddOrder';
 
 const api = axios.create({
@@ -11,7 +13,8 @@ const Statistic = () => {
     const [totaux, setTotaux] = useState("...");
     const [state, setState] = useState({orders: []});
 
-    const open = async () =>{          
+    const open = async () =>{   
+        //query data from database       
         try {
             let data = await api.get('/diner', {
         }).then(({data}) => data);
@@ -23,13 +26,12 @@ const Statistic = () => {
         }
     }
     
+    //sum the total bill and set the money earned
     function calculate(){
         state.orders.map(calcul =>
             totalMoney += calcul.total
         );
-
         setTotaux(totalMoney);
- 
     }
 
     return(
@@ -39,6 +41,7 @@ const Statistic = () => {
                     <button className="button" onClick={open}>Click here </button>
                 </div>  
                 <h4>Results</h4>
+                {/* show the query results */}
                 <div>
                     <table>
                         <tr>
