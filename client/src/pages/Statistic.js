@@ -1,30 +1,49 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-//import style
-import {StyleAddOrder} from '../styles/styled-components/StyleAddOrder';
+import CanvasJSReact from '../assets/canvasjs.react';
+//var CanvasJSReact = require('./canvasjs.react');
+let CanvasJS = CanvasJSReact.CanvasJS;
+let CanvasJSChart = CanvasJSReact.CanvasJSChart;
+//let Component = React.Component;
+
 
 const api = axios.create({
     baseURL: `${process.env.REACT_APP_API_URL}api/order`
 });
 
+
+
 const Statistic = () => {
     let totalMoney = 0;
     const [totaux, setTotaux] = useState("...");
     const [state, setState] = useState({orders: []});
+    const [canva, setCanva] = useState(false);
+    //const [dataPoints, setDataPoints] = useState({dataPoints: []})  
 
-    const open = async () =>{   
+    function open(){   
+
         //query data from database       
         try {
-            let data = await api.get('/diner', {
-        }).then(({data}) => data);
-
-        setState({orders: data});
-        console.log(data);
+            api.get('/diner', {
+            }).then(({data}) => {let d= data
+                setState({orders: d});
+            });
+     
         } catch(err){
             console.log(err);
         }
+
+        console.log(state.orders);
+
+        setCanva(true); 
     }
+
+    const dataPoints = state.orders.map(dataP =>{
+      return  {label : dataP.createdAt, y: dataP.total}
+    }
+       
+    );
     
     //sum the total bill and set the money earned
     function calculate(){
@@ -33,9 +52,57 @@ const Statistic = () => {
         );
         setTotaux(totalMoney);
     }
+    //{ x:  new Date("2019-03-01"), y:  state.orders.length },
+
+    const options = {
+        
+        animationEnabled: true,
+        theme: "light2",
+        title:{
+            text: "statistic of 8-rated overcooked"
+        },
+        axisX:{
+            title: "Date",
+            valueFormatString: "DD MMM HH MM",
+            crosshair: {
+                enabled: true,
+                snapToDataPoint: true
+            }
+        },
+        axisY: {
+            title: "Price (in DOLLAR)",
+            valueFormatString: "$##0.00",
+            crosshair: {
+                enabled: true,
+                snapToDataPoint: true,
+                labelFormatter: function(e) {
+                    return "€" + CanvasJS.formatNumber(e.value, "##0.00");
+                }
+            }
+        },
+ 
+        data: [{
+            type: "area",
+            xValueFormatString: "DD MMM  HH MM",
+            yValueFormatString: "€##0.00",
+            dataPoints: dataPoints
+        }],
+
+        
+    }
 
     return(
-        <StyleAddOrder>
+        <>
+        <div>
+            {
+                canva &&
+            <CanvasJSChart options = {options}
+            //  onRef = {ref => this.chart = ref} 
+             />
+            }
+
+        </div>
+        <div>
             <div className="containeur">
                 <div id="buttons">
                     <button className="button" onClick={open}>Click here </button>
@@ -44,31 +111,33 @@ const Statistic = () => {
                 {/* show the query results */}
                 <div>
                     <table>
-                        <tr>
-                            <th>Date</th>
-                            {
-                                state.orders.map(gaga =>
-                                    <td>
-                                    {    
-                                        gaga.createdAt
-                                    }                          
-                                    </td>
-                                ) 
-                            }
+                        <tbody>
+                            <tr>
+                                <th>Date</th>
+                                {
+                                    state.orders.map((gaga, index) =>
+                                        <td key={index}>
+                                        {    
+                                            gaga.createdAt
+                                        }                          
+                                        </td>
+                                    ) 
+                                }
 
-                        </tr>
-                        <tr>
-                            <th>Money</th>
-                            {
-                                state.orders.map(gaga =>
-                                    <td>$
-                                    {    
-                                        gaga.total
-                                    }                          
-                                    </td>
-                                ) 
-                            }
-                        </tr>
+                            </tr>
+                            <tr>
+                                <th>Money</th>
+                                {
+                                    state.orders.map((gaga, index) =>
+                                        <td key={index}>$
+                                        {    
+                                            gaga.total
+                                        }                          
+                                        </td>
+                                    ) 
+                                }
+                            </tr>
+                        </tbody>
                     </table>
                     <div id="buttons">
                         {
@@ -86,7 +155,9 @@ const Statistic = () => {
                     </div>
                 </div>
             </div>
-        </StyleAddOrder>
+        </div>
+
+        </>
     );
 };
 

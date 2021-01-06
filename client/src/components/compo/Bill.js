@@ -87,8 +87,8 @@ const Bill = ({TheOrderId}) => {
                                 <div>
                                     <h4>Total bill</h4>
                                     {
-                                        state.total.map(totalB => 
-                                            <div>
+                                        state.total.map((totalB, index) => 
+                                            <div key={index}>
                                                 <h5>${totalB.totalBill}</h5>
                                             </div>
                                         )

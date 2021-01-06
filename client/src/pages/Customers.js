@@ -71,10 +71,10 @@ export default function Customers() {
                         </thead>
                         <tbody>
                             {
-                                state.customers.map(cust => 
-                                    <tr key={cust.id}>
-                                        <td key={cust.id}>{cust.name_customer}</td>
-                                        <td key={cust.id}>{cust.type_customer}</td>
+                                state.customers.map((cust, index) => 
+                                    <tr key={index}>
+                                        <td>{cust.name_customer}</td>
+                                        <td>{cust.type_customer}</td>
                                     </tr>
                                 )
                             }

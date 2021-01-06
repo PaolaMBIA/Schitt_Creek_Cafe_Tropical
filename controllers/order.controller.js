@@ -132,34 +132,37 @@ module.exports.totalBill = (req, res) => {
 //get all the 8-rated overcooked diner did serve in the last 144 hours
 module.exports.dinerInfo = (req, res) => {
     OrderModel.aggregate([
-        {
-            $match : {
-               "menu_item.level_cookedness": 8,
-                createdAt: {$gte: date}
+            {
+                $match : {
+                    "menu_item.level_cookedness": 8,
+                    createdAt: {$gte: date}
+                }
+            },
+            {
+                $project : {
+                    menu_item: {
+                        $filter: {
+                            input: "$menu_item",
+                            as: "menu_item",
+                            cond: {$eq: ["$$menu_item.level_cookedness", 8]}
+                        }
+                    },   
+                    createdAt: {$dateToString: {'format': '%Y-%m-%d à %Hh%M', 'date': '$createdAt'}}
+                }
+            },
+            {
+                $addFields: {
+                    total: {$sum: "$menu_item.priceFood" }, 
+                     
+                }
             }
-        },
-        {
-            $project : {   
-                total: {$sum: "$menu_item.priceFood" }, 
-                createdAt: {$dateToString: {'format': '%Y-%m-%d à %Hh%M', 'date': '$createdAt'}}  
-            }
-        },
-
-        // {
-        //     $count: "nbr_order",
-        // },
-        // {
-        //     $addFields: {
-        //         somme: {$sum: "$totalBill"},
-        //     }
-        // }
         ],
-        // function numMedian(a) {
-        //     a = a.slice(0).sort(function(x, y) {
+        // function numMedian(docs) {
+        //     docs = docs.slice(0).sort(function(x, y) {
         //       return x - y;
         //     });
-        //     var b = (a.length + 1) / 2;
-        //     return (a.length % 2) ? a[b - 1] : (a[b - 1.5] + a[b - 0.5]) / 2;
+        //     let b = (docs.length + 1) / 2;
+        //     return (docs.length % 2) ? a[b - 1] : (a[b - 1.5] + a[b - 0.5]) / 2;
         //   }
 
         function(err, docs){
