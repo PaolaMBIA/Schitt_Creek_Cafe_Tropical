@@ -2,7 +2,7 @@ const OrderModel= require('../models/order.model');
 const ObjectID = require('mongoose').Types.ObjectId;
 const mongoose = require("mongoose");
 
-
+//get date for the last 144 hours
 let date = new Date();
 date.setHours(date.getHours()-144);
 
@@ -156,13 +156,6 @@ module.exports.dinerInfo = (req, res) => {
                 }
             }
         ],
-        // function numMedian(docs) {
-        //     docs = docs.slice(0).sort(function(x, y) {
-        //       return x - y;
-        //     });
-        //     let b = (docs.length + 1) / 2;
-        //     return (docs.length % 2) ? a[b - 1] : (a[b - 1.5] + a[b - 0.5]) / 2;
-        //   }
 
         function(err, docs){
         if(!err)
