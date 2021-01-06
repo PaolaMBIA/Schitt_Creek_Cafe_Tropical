@@ -152,8 +152,7 @@ module.exports.dinerInfo = (req, res) => {
             },
             {
                 $addFields: {
-                    total: {$sum: "$menu_item.priceFood" }, 
-                     
+                    total: {$sum: "$menu_item.priceFood" },            
                 }
             }
         ],
@@ -168,6 +167,65 @@ module.exports.dinerInfo = (req, res) => {
         function(err, docs){
         if(!err)
             res.send(docs);
+        else 
+            console.log("error: " + err);
+    })
+}
+
+//get the median value
+module.exports.meanValue = (req, res) => {
+    OrderModel.aggregate([
+            {
+                $match : {
+                    "menu_item.level_cookedness": 8,
+                    createdAt: {$gte: date}
+                }
+            },
+            {
+                $project : {
+                    menu_item: {
+                        $filter: {
+                            input: "$menu_item",
+                            as: "menu_item",
+                            cond: {$eq: ["$$menu_item.level_cookedness", 8]}
+                        }
+                    }, 
+                }
+            },
+            {
+                $project: {
+                    total: {$sum: "$menu_item.priceFood" }, 
+                     
+                }
+            }
+        ],
+
+        //calculate the median 
+        function(err, docs, docsTab, results){
+            if (!err) {
+            
+                //extract the total bill for each json document in the table docs
+                docs = docs.map(element => {
+                    let totaux = element.total;
+                    return totaux
+                });
+                
+                //sort the table in ascending order
+                docsTab = docs.slice(0).sort((x, y) => { return x - y });
+
+                //calculate the index of median value in the table
+                let b = (docsTab.length + 1) / 2;
+
+                //check if docsTab.length is pair
+                results = (docsTab.length % 2) ? docsTab[b - 1] : (docsTab[b - 1.5] + docsTab[b - 0.5]) / 2
+                
+                //check if results is an integer
+                medianResult = (Number.isInteger(results)) ? results : parseInt(results, 10);
+                
+                //send the result in string beacause the integers aren't directly supported;
+                res.send(medianResult.toString());
+        }
+
         else 
             console.log("error: " + err);
     })

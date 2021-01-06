@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 import CanvasJSReact from '../assets/canvasjs.react';
+
 //var CanvasJSReact = require('./canvasjs.react');
 let CanvasJS = CanvasJSReact.CanvasJS;
 let CanvasJSChart = CanvasJSReact.CanvasJSChart;
@@ -17,7 +18,8 @@ const api = axios.create({
 const Statistic = () => {
     let totalMoney = 0;
     const [totaux, setTotaux] = useState("...");
-    const [state, setState] = useState({orders: []});
+    const [state, setState] = useState({ orders: [] });
+    const [meanV, setMean] = useState(null);
     const [canva, setCanva] = useState(false);
     //const [dataPoints, setDataPoints] = useState({dataPoints: []})  
 
@@ -34,16 +36,28 @@ const Statistic = () => {
             console.log(err);
         }
 
-        console.log(state.orders);
-
         setCanva(true); 
-    }
+    };
 
     const dataPoints = state.orders.map(dataP =>{
       return  {label : dataP.createdAt, y: dataP.total}
-    }
-       
-    );
+    });
+
+    function mean(){   
+
+        //query data from database       
+        try {
+            api.get('/mean', {
+            }).then(({data}) => {let d= data
+                setMean(d);
+            });
+     
+        } catch(err){
+            console.log(err);
+        }
+
+        console.log(meanV); 
+    };
     
     //sum the total bill and set the money earned
     function calculate(){
@@ -151,6 +165,15 @@ const Statistic = () => {
                     <div>
                         {
                             <p>We earned __"${totaux}"__ </p>
+                        }
+                    </div>
+                        
+                    <div>
+                        <button className="button" onClick={mean}>See mean Value</button>
+                    </div>
+                    <div>
+                        {
+                            <p>Mean __"${meanV}"__ </p>
                         }
                     </div>
                 </div>
