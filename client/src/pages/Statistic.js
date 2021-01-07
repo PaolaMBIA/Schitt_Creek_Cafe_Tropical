@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 import CanvasJSReact from '../assets/canvasjs.react';
+import {StyleStatistic } from '../styles/styled-components/StyleStatistic';
 
 //var CanvasJSReact = require('./canvasjs.react');
 let CanvasJS = CanvasJSReact.CanvasJS;
@@ -13,16 +14,17 @@ const api = axios.create({
     baseURL: `${process.env.REACT_APP_API_URL}api/order`
 });
 
-
-
 const Statistic = () => {
     let totalMoney = 0;
     const [totaux, setTotaux] = useState("...");
     const [state, setState] = useState({ orders: [] });
-    const [meanV, setMean] = useState(null);
+    const [medianV, setMedianV] = useState(null);
     const [canva, setCanva] = useState(false);
-    //const [dataPoints, setDataPoints] = useState({dataPoints: []})  
+    const [myAppearsButton, setMyAppearsButton] = useState(true);
+    const [myDisappearsButton, setMyDisappearsButton] = useState(false);
+    const [text, setText] = useState(true);
 
+    //get data filter by level cookedness
     function open(){   
 
         //query data from database       
@@ -37,26 +39,37 @@ const Statistic = () => {
         }
 
         setCanva(true); 
+        setMyAppearsButton(false);
+        setText(false);
+        setMyDisappearsButton(true);
     };
 
+    //disappears function
+    function close() {
+        setCanva(false); 
+        setMyAppearsButton(true);
+        setMyDisappearsButton(false);
+    }
+
+    //extract data for diagram
     const dataPoints = state.orders.map(dataP =>{
       return  {label : dataP.createdAt, y: dataP.total}
     });
 
-    function mean(){   
+
+    //get the median value
+    function median(){   
 
         //query data from database       
         try {
             api.get('/mean', {
             }).then(({data}) => {let d= data
-                setMean(d);
+                setMedianV(d);
             });
      
         } catch(err){
             console.log(err);
         }
-
-        console.log(meanV); 
     };
     
     //sum the total bill and set the money earned
@@ -66,8 +79,8 @@ const Statistic = () => {
         );
         setTotaux(totalMoney);
     }
-    //{ x:  new Date("2019-03-01"), y:  state.orders.length },
 
+    //options of canvajs diagram
     const options = {
         
         animationEnabled: true,
@@ -90,7 +103,7 @@ const Statistic = () => {
                 enabled: true,
                 snapToDataPoint: true,
                 labelFormatter: function(e) {
-                    return "€" + CanvasJS.formatNumber(e.value, "##0.00");
+                    return "$" + CanvasJS.formatNumber(e.value, "##0.00");
                 }
             }
         },
@@ -106,81 +119,99 @@ const Statistic = () => {
     }
 
     return(
-        <>
-        <div>
-            {
-                canva &&
-            <CanvasJSChart options = {options}
-            //  onRef = {ref => this.chart = ref} 
-             />
-            }
+        <StyleStatistic>
+            <div className="containeurFluid">
+                <div className="myCanva">
+                    {/* appears canvajs diagram */}
+                    {
+                        myAppearsButton &&
+                        <div id="buttons">
+                            <button className="myButtons" onClick={open}>Click here to show the diagram
+                            {
+                                    text &&
+                                   <p>and fill in the table</p> 
+                            }
+                            </button>
+                        </div> 
+                    }
 
-        </div>
-        <div>
-            <div className="containeur">
-                <div id="buttons">
-                    <button className="button" onClick={open}>Click here </button>
-                </div>  
-                <h4>Results</h4>
-                {/* show the query results */}
-                <div>
-                    <table>
-                        <tbody>
-                            <tr>
-                                <th>Date</th>
-                                {
-                                    state.orders.map((gaga, index) =>
-                                        <td key={index}>
-                                        {    
-                                            gaga.createdAt
-                                        }                          
-                                        </td>
-                                    ) 
-                                }
+                    {/* canvajs diagram */}
+                    {
+                        canva &&
+                        <CanvasJSChart options = {options}/>
+                    }
 
-                            </tr>
-                            <tr>
-                                <th>Money</th>
+                    {/* disappears canvajs diagram */}
+                    {
+                        myDisappearsButton &&
+                        <div id="buttons">
+                            <button className="myButtons" onClick={close}>Click here to hide the diagram</button>
+                        </div> 
+                    }
+                </div>
+            </div>
+            <div>
+                <div className="containeurFluid"> 
+                    {/* show the query results */}
+                    <div className="myBody">
+                        <h4>Results</h4>
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <th>Date</th>
+                                    {
+                                        state.orders.map((gaga, index) =>
+                                            <td key={index}>
+                                            {    
+                                                gaga.createdAt
+                                            }                          
+                                            </td>
+                                        ) 
+                                    }
+                                </tr>
+                                <tr>
+                                    <th>Money</th>
+                                    {
+                                        state.orders.map((gaga, index) =>
+                                            <td key={index}>$
+                                            {    
+                                                gaga.total
+                                            }                          
+                                            </td>
+                                        ) 
+                                    }
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div className="myResults">
+                            <div>
                                 {
-                                    state.orders.map((gaga, index) =>
-                                        <td key={index}>$
-                                        {    
-                                            gaga.total
-                                        }                          
-                                        </td>
-                                    ) 
+                                    <p>Twyla serve __<span>{state.orders.length}</span>__   8-rated overcooked in the last 144 hours </p>
                                 }
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div id="buttons">
-                        {
-                            <p>Twyla serve __"{state.orders.length}"__   8-rated overcooked in the last 6 month </p>
-                        }
-                    </div>
-                    <div >
-                        <button className="button" onClick={calculate}>See total</button>
-                    </div>
-                    
-                    <div>
-                        {
-                            <p>We earned __"${totaux}"__ </p>
-                        }
-                    </div>
-                        
-                    <div>
-                        <button className="button" onClick={mean}>See mean Value</button>
-                    </div>
-                    <div>
-                        {
-                            <p>Mean __"${meanV}"__ </p>
-                        }
+                            </div>
+                            <div >
+                                <button className="myBut" onClick={calculate}>Show total</button>
+                            </div>
+                            
+                            <div>
+                                {
+                                    <p>We earned __<span>${totaux}</span>__ </p>
+                                }
+                            </div>
+                                
+                            <div>
+                                <button className="myBut" onClick={median}>Show median Value</button>
+                            </div>
+                            <div>
+                                {
+                                   <p> __<span>${medianV}</span>__ </p>
+                                }
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-
-        </>
+        </StyleStatistic>
     );
 };
 
