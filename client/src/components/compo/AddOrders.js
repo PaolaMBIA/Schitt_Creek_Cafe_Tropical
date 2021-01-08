@@ -2,7 +2,17 @@ import React, { useState } from 'react';
 import Select from 'react-select';
 import AddCustomers from "./AddCustomers";
 import Bill from './Bill';
-import {StyleAddOrder} from '../../styles/styled-components/StyleAddOrder';
+import { StyleAddOrder } from '../../styles/styled-components/StyleAddOrder';
+
+// Importing toastify module 
+import {toast} from 'react-toastify';  
+  
+// Import toastify css file 
+import 'react-toastify/dist/ReactToastify.css';  
+  
+ // toast-configuration method,  
+ // it is compulsory method. 
+toast.configure(); 
 
 const axios = require('axios').default;
 
@@ -31,7 +41,7 @@ const optionsTone = [
     {value: 'Excited', label: 'Excited'},
 ]
 
-const AddOrders = ({TheOrderId, TheCustomerId}) => {
+const AddOrders = ({TheOrderId, TheCustomerId, numberCustomer}) => {
     const [food, setFood] = useState("");
     const [drink, setDrink] = useState("");
     const [priceFood, setPriceFood] = useState("");
@@ -39,18 +49,21 @@ const AddOrders = ({TheOrderId, TheCustomerId}) => {
     const [levelCookedness, setLevelCookedness] = useState("");
     const [tone, setTone] = useState("");
 
-    const [orderFalse, setorderFalse] = useState(false);
+    const [decrementNumber, setdecrementNumber] = useState(numberCustomer);
+    const [addCustomer, setaddCustomer] = useState(false);
     const [orderTrue, setorderTrue] = useState(true);
     const [bill, setbill] = useState(false);
+    const [buttonBill, setbuttonBill] = useState(false);
+    const [buttonAddCustomer, setbuttonAddCustomer] = useState(true);
 
-    function open(){
-        setorderFalse(true);
+    function showAddCustomer() {
+        setaddCustomer(true);
         setorderTrue(false);
-        setbill(false);
+        setbill(false);   
     };
 
     function switchBill(){
-        setorderFalse(false);
+        setaddCustomer(false);
         setorderTrue(false);
         setbill(true);
     }
@@ -58,30 +71,43 @@ const AddOrders = ({TheOrderId, TheCustomerId}) => {
     function addOrder(e) {
         e.preventDefault();
         
-        //patch the order item into the order
-        axios({
-            method: "patch",
-            url: `${process.env.REACT_APP_API_URL}api/order/add-order/${TheOrderId}`,
-            withCredentials: true,
-            data: {
-                customerId: TheCustomerId,
-                food: food,
-                drink: drink,
-                priceFood:  priceFood,
-                priceDrink: priceDrink,
-                level_cookedness: levelCookedness.value,
-                tone: tone.value,
-            },
-        }).then((res) => {
-            if(res.data.errors){
-                alert("problem!!");
+        if (decrementNumber <= 0) {
+            toast.info("all order have been added", { autoClose: false });
+            setbuttonAddCustomer(false);
+            setbuttonBill(true);
+        } else {
+            //patch the order item into the order
+            axios({
+                method: "patch",
+                url: `${process.env.REACT_APP_API_URL}api/order/add-order/${TheOrderId}`,
+                withCredentials: true,
+                data: {
+                    customerId: TheCustomerId,
+                    food: food,
+                    drink: drink,
+                    priceFood: priceFood,
+                    priceDrink: priceDrink,
+                    level_cookedness: levelCookedness.value,
+                    tone: tone.value,
+                },
+            }).then((res) => {
+                if (res.data.errors) {
+                    toast.error("problem!!");
+                }
+            }).catch((err) => {
+                console.log(err);
+            });
+
+            setdecrementNumber((oldNumber) => oldNumber - 1);
+
+            if (decrementNumber === 1) {
+                toast.info("all order have been added", { autoClose: false });
+                setbuttonAddCustomer(false);
+                setbuttonBill(true); 
+            } else {
+                toast.info(`there are still ${decrementNumber-1} orders to add`, { autoClose: false }); 
             }
-            else{
-                alert("order added");
-            }
-        }).catch((err)=>{
-            console.log(err);
-        })
+        }
     }
 
     //changing the cooking level state
@@ -100,11 +126,12 @@ const AddOrders = ({TheOrderId, TheCustomerId}) => {
         <StyleAddOrder>
             {
                 //appears when we want to add another customer in the order
-                orderFalse &&
+                addCustomer &&
                 <div >
                     {
                             <AddCustomers 
-                                TheOrderId = {TheOrderId}
+                                TheOrderId={TheOrderId}
+                                numberCustomer={numberCustomer-1}
                             />
                     }
                     {/* <AddCustomers TheOrderId = {state.newOrder._id}/> */}
@@ -186,9 +213,16 @@ const AddOrders = ({TheOrderId, TheCustomerId}) => {
                                 <div id="buttons">
                                     <button className="button" type="submit">Submit</button>
                                 </div>
-                            </form>
-                            <button id="buttonFlui" onClick={open}>add customer</button>
+                        </form>
+                        {
+                            buttonAddCustomer && 
+                            <button id="buttonFlui" onClick={showAddCustomer}>add customer</button>                           
+                        }
+                        
+                        {
+                            buttonBill &&
                             <button id="buttonBill" onClick={switchBill}>Bill --</button>
+                        }               
                         </div>
                     </div>
             } 

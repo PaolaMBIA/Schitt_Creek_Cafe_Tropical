@@ -17,18 +17,15 @@ const Home = () => {
     const buttonOpen = useRef(null);
     const modalElement = useRef(null);
 
-    let number;
-
+    const [number, setNumber] = useState(" ");
     const [state, setState] = useState({newOrder: []});
     const [homeFalse, sethomeFalse] = useState(false);
     const [numberAdd, setnumberAdd] = useState(true);
     const [homeTrue, sethomeTrue] = useState(true);
 
-
     function addNumber(e) {
         e.preventDefault();
-        number = e.target.number.value;
-
+        
         modalElement.current.style.display = 'none';
 
         sethomeTrue(false);
@@ -52,6 +49,8 @@ const Home = () => {
         }).catch((err)=>{
             console.log(err);
         })
+
+        console.log(number);
     }
 
     return(
@@ -64,7 +63,8 @@ const Home = () => {
                         state.newOrder.map(or => 
                             <AddCustomers 
                                 key={or.toString()}
-                                TheOrderId = {or._id}
+                                TheOrderId={or._id}
+                                numberCustomer={number}
                             />)
                     }
                     {/* <AddCustomers TheOrderId = {state.newOrder._id}/> */}
@@ -104,7 +104,13 @@ const Home = () => {
                 numberAdd && 
                 <StyleHome>
                     <div id="numberModal" ref={modalElement}>
-                        <Modal addNumber={addNumber} buttonOpen={buttonOpen} modalElement={modalElement}/>
+                        <Modal
+                            addNumber={addNumber}
+                            buttonOpen={buttonOpen}
+                            modalElement={modalElement}
+                            number={number}
+                            setNumber={setNumber}
+                        />
                     </div>
                 </StyleHome>
             }

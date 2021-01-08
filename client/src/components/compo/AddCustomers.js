@@ -1,49 +1,72 @@
 import React, { useState } from 'react';
 import AddOrders from './AddOrders';
-import {StyleAddCustomers} from '../../styles/styled-components/StyleAddCustomers';
+import { StyleAddCustomers } from '../../styles/styled-components/StyleAddCustomers';
+
+// Importing toastify module 
+import {toast} from 'react-toastify';  
+  
+// Import toastify css file 
+import 'react-toastify/dist/ReactToastify.css';  
+  
+ // toast-configuration method,  
+ // it is compulsory method. 
+toast.configure() 
 
 
 const axios = require('axios').default;
 
 
-const AddCustomers = ({TheOrderId}) => {
+const AddCustomers = ({TheOrderId, numberCustomer}) => {
     const [name, setName] = useState("");
     const [type, setType] = useState("");
 
+    const [decrementNumber, setdecrementNumber] = useState(numberCustomer);
     const [state, setState] = useState({newCustomer: []});
     const [addCustomers, setAddCustomer] = useState(true);
     const [orderButton, setOrderButton] = useState(false);
     const [addOrder, setAddOrder] = useState(false);
-
+    //let number = numberCustomer - 1;
 
     function addCustomer(e) {
         e.preventDefault();
-        // post the customer's name and type in database
-        axios({
-            method: "post",
-            url: `${process.env.REACT_APP_API_URL}api/customer/`,
-            withCredentials: true,
-            data: {
-                name_customer: name,
-                type_customer: type
-            },
-        }).then((res) => {
-            if(res.data.errors){
-                alert("problem!!");
-            }
-            else{
-                setState({newCustomer: [res.data]})
-                alert("customer added");
-            }
-        }).catch((err)=>{
-            console.log(err);
-        });
+
+        if (decrementNumber <= 0) {
+            toast.info("all customers have been added", {autoClose:false});
+            return;
+        } else {
+            
+            // post the customer's name and type in database
+            axios({
+                method: "post",
+                url: `${process.env.REACT_APP_API_URL}api/customer/`,
+                withCredentials: true,
+                data: {
+                    name_customer: name,
+                    type_customer: type
+                },
+            }).then((res) => {
+                if(res.data.errors){
+                    toast.error("problem!!", {autoClose:false});
+                }
+                else{
+                    setState({newCustomer: [res.data]})
+                }
+            }).catch((err)=>{
+                console.log(err);
+            });
+            
+            setdecrementNumber((oldNumber) => oldNumber - 1);             
+            
+        }
+        console.log(decrementNumber);
+        (decrementNumber> 1) ? toast.info(`there are still ${decrementNumber - 1} customers to add` , {autoClose:false})
+        : toast.info(`all customers have been added`, {autoClose:false});
 
         setOrderButton(true);
     }
 
     //change state
-    function open(){
+    function associateOrder(){
         setAddCustomer(false);
         setOrderButton(false);
         setAddOrder(true);
@@ -82,7 +105,7 @@ const AddCustomers = ({TheOrderId}) => {
                 {
                     //is show when the customer was add
                     orderButton && 
-                    <div id="bout"><button className="button1" onClick={open}>Associate an order</button></div>
+                    <div id="bout"><button className="button1" onClick={associateOrder}>Associate an order</button></div>
                 }
             </div>               
             }
@@ -94,6 +117,7 @@ const AddCustomers = ({TheOrderId}) => {
                         key={cus.toString()} 
                         TheCustomerId = {cus._id}
                         TheOrderId={TheOrderId}
+                        numberCustomer={numberCustomer}
                     />)
             }     
         </StyleAddCustomers>

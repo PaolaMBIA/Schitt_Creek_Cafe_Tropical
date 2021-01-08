@@ -18,7 +18,7 @@ const Statistic = () => {
     let totalMoney = 0;
     const [totaux, setTotaux] = useState("...");
     const [state, setState] = useState({ orders: [] });
-    const [medianV, setMedianV] = useState(null);
+    const [medianV, setMedianV] = useState("...");
     const [canva, setCanva] = useState(false);
     const [myAppearsButton, setMyAppearsButton] = useState(true);
     const [myDisappearsButton, setMyDisappearsButton] = useState(false);
