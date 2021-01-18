@@ -31,7 +31,7 @@ const AddCustomers = ({TheOrderId, numberCustomer}) => {
         e.preventDefault();
 
         if (decrementNumber <= 0) {
-            toast.info("all customers have been added", {autoClose:false});
+            toast.info("all customers have been added", {autoClose:true});
             return;
         } else {
             
@@ -46,7 +46,7 @@ const AddCustomers = ({TheOrderId, numberCustomer}) => {
                 },
             }).then((res) => {
                 if(res.data.errors){
-                    toast.error("problem!!", {autoClose:false});
+                    toast.error("problem!!", {autoClose:true});
                 }
                 else{
                     setState({newCustomer: [res.data]})
@@ -59,8 +59,8 @@ const AddCustomers = ({TheOrderId, numberCustomer}) => {
             
         }
         console.log(decrementNumber);
-        (decrementNumber> 1) ? toast.info(`there are still ${decrementNumber - 1} customers to add` , {autoClose:false})
-        : toast.info(`all customers have been added`, {autoClose:false});
+        (decrementNumber> 1) ? toast.info(`Still ${decrementNumber - 1} customers to add` , {autoClose:true})
+        : toast.info(`all customers have been added`, {autoClose:true});
 
         setOrderButton(true);
     }

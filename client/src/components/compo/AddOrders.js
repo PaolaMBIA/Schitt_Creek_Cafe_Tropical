@@ -9,6 +9,7 @@ import {toast} from 'react-toastify';
   
 // Import toastify css file 
 import 'react-toastify/dist/ReactToastify.css';  
+
   
  // toast-configuration method,  
  // it is compulsory method. 
@@ -96,17 +97,21 @@ const AddOrders = ({TheOrderId, TheCustomerId, numberCustomer}) => {
                 }
             }).catch((err) => {
                 console.log(err);
-            });
+            });        
 
             setdecrementNumber((oldNumber) => oldNumber - 1);
+        }
 
-            if (decrementNumber === 1) {
-                toast.info("all order have been added", { autoClose: false });
-                setbuttonAddCustomer(false);
-                setbuttonBill(true); 
-            } else {
-                toast.info(`there are still ${decrementNumber-1} orders to add`, { autoClose: false }); 
-            }
+        counter(decrementNumber-1);
+    }
+
+    const counter = decrementNumber => {
+        if ((decrementNumber === 0)) {
+            toast.info("all order have been added", { autoClose: true });
+            setbuttonAddCustomer(false);
+            setbuttonBill(true); 
+        } else {
+            toast.info(`Still ${decrementNumber} orders to add`, { autoClose: true }); 
         }
     }
 
@@ -151,7 +156,6 @@ const AddOrders = ({TheOrderId, TheCustomerId, numberCustomer}) => {
                                         id="food"
                                         placeholder="Enter food" 
                                         name="food" 
-                                        required="required"
                                         onChange={(e) => setFood(e.target.value)}
                                         value={food}
                                         />
@@ -162,7 +166,6 @@ const AddOrders = ({TheOrderId, TheCustomerId, numberCustomer}) => {
                                         id="pricef"
                                         placeholder="Enter price of food" 
                                         name="priceFood" 
-                                        required="required"
                                         onChange={(e) => setPriceFood(e.target.value)}
                                         value={priceFood}
                                         />

@@ -21,6 +21,8 @@ const Bill = ({TheOrderId}) => {
     const [totalBi, setTotalBi] = useState(true);
     const [home, setHome] = useState(false);
 
+    const [lock, setLock] = useState(false);
+
     function open(){
         setBillTrue(true);
         setTotalBi(false);
@@ -62,6 +64,7 @@ const Bill = ({TheOrderId}) => {
             }
             else{
                 setHome(true);
+                setLock(true);
                 div.current.style.display = 'none';
             }
         }).catch((err)=>{
@@ -109,7 +112,6 @@ const Bill = ({TheOrderId}) => {
                                         name="feedback"
                                         placeholder="Enter feedback"
                                         rows={7}
-                                        required="required"
                                         onChange={(e) => setFeedback(e.target.value)}
                                         value={feedback}
                                     />
@@ -134,7 +136,7 @@ const Bill = ({TheOrderId}) => {
             {
                 //return to home page when we submit the bill
                 home &&
-                <Home/>
+                    <Home lock={lock}/>
             }
         </div>
 

@@ -7,13 +7,14 @@ import AddCustomers from "../components/compo/AddCustomers";
 
 //import image
 import table from '../styles/assets/table.jpg';
+import occupied from '../styles/assets/Capture.PNG'
 
 //import style
 import '../styles/sass/style.scss';
 import {StyleHome} from '../styles/styled-components/StyleHome';
 
 
-const Home = () => {
+const Home = ({lock}) => {
     const buttonOpen = useRef(null);
     const modalElement = useRef(null);
 
@@ -77,7 +78,11 @@ const Home = () => {
                     <h3>ROOM</h3>
                     <div className="contain">
                         <div className="table">
-                            <img src={table}  ref={buttonOpen} alt="table"/>
+                            {
+                                lock ?
+                                    <img src={occupied} ref={buttonOpen} alt="table" /> 
+                                    : <img src={table} ref={buttonOpen} alt="table" />
+                            }
                             <h5>Table 1</h5>
                         </div>
                         <div className="table">

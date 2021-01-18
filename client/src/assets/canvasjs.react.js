@@ -7,8 +7,8 @@ CanvasJS is a commercial product which requires purchase of license. Without a c
 https://canvasjs.com/license/
 
 */
-var React = require('react');
-var CanvasJS = require('./canvasjs.min');
+import React from 'react';
+let CanvasJS = require('./canvasjs.min');
 CanvasJS = CanvasJS.Chart ? CanvasJS : window.CanvasJS;
 
 class CanvasJSChart extends React.Component {
@@ -49,7 +49,7 @@ class CanvasJSChart extends React.Component {
 	}
 }
 
-var CanvasJSReact = {
+let CanvasJSReact = {
 	CanvasJSChart: CanvasJSChart,
 	CanvasJS: CanvasJS
 };
