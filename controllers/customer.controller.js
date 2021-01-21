@@ -45,10 +45,14 @@ module.exports.customerInfo = (req, res) => {
 
 //get the query data
 module.exports.typeInfo = (req, res) => {
-    
-    CustomerModel.find(req.query, (err, docs) => {
+    const typeCustomer = req.params.type;
+
+    //recherche la donnée saisit dans l'input sans prendre en compte les majuscules et minuscules
+    const query = { 'type_customer': { $regex: new RegExp(`^${typeCustomer}`), $options: 'i' } };
+
+    CustomerModel.find(query, (err, docs) => {
         if(!err) res.send(docs);
-        else console.log('unknown g : ' + err);
+        else console.log('unknown : ' + err);
     }).select();
     
 }

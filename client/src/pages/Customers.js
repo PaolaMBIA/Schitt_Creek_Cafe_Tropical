@@ -3,6 +3,7 @@ import axios from 'axios';
 
 //import style
 import {StyleAddCustomers} from '../styles/styled-components/StyleAddCustomers';
+//import { useHistory } from 'react-router-dom';
 
 
 const api = axios.create({
@@ -20,13 +21,10 @@ export default function Customers() {
         
         //query data from database
         try {
-            let data = await api.get('', {
-                params: {
-                    type_customer: type,          
-                },
+            let data =  await api.get(`/${type}`, {
             }).then(({data}) => data);
 
-            setState({customers: data});
+            setState({customers: [data]});
             console.log(data);
         } catch(err){
             console.log(err);
@@ -37,7 +35,7 @@ export default function Customers() {
         <StyleAddCustomers>
             <div className="container">
                 <h4>Search customer</h4>
-                <form action="" onSubmit={addCustomer}>
+                 <form action="" onSubmit={addCustomer}> 
                     {/* <input 
                         placeholder="Enter customer" 
                         name="name" 
@@ -49,13 +47,13 @@ export default function Customers() {
                         placeholder="Enter type of customer" 
                         name="type" 
                         id="type"
-                        onChange={(e) => setType(e.target.value)}
+                        onChange={(e)=>setType(e.target.value)}
                         value={type}
                     />
-                    <div id="buttons">
+                     <div id="buttons">
                         <button className="button" type="submit">Submit</button>
-                    </div>
-                </form>
+                    </div> 
+                </form> 
             </div>
             <div className="containerfluide">
             <div className="results">
@@ -66,22 +64,26 @@ export default function Customers() {
                         <thead>
                             <tr>
                                 <th>Customers</th>
-                                <th>Types</th>
+                                    <th>Types</th>
+                                    <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             {
-                                state.customers.map((cust, index) => 
-                                    <tr key={index}>
-                                        <td>{cust.name_customer}</td>
-                                        <td>{cust.type_customer}</td>
-                                    </tr>
+                                state.customers.map((cust) => 
+                                    cust.map(((type, index) =>
+                                        <tr key={index}>
+                                            <td>{type.name_customer}</td>
+                                            <td>{type.type_customer}</td>
+                                            
+                                        </tr>                                            
+                                    ))
                                 )
                             }
                         </tbody>
                     </table>
                 </div>
-            </div>
+                </div>
             </div>
         </StyleAddCustomers>
     );

@@ -12,7 +12,7 @@ const index = () => {
             <Switch>
                 <Route path="/" exact component={Home}/>
                 <Route path="/customer" exact component={Customers}/>
-                <Route path="/statistic" exact component={Statistic}/>
+                <Route path="/statistic" exact component={Statistic} />
                 <Redirect to ="/"/>
             </Switch>
         </Router>

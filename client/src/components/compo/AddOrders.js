@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import AddCustomers from "./AddCustomers";
 import Bill from './Bill';
@@ -50,32 +50,43 @@ const AddOrders = ({TheOrderId, TheCustomerId, numberCustomer}) => {
     const [levelCookedness, setLevelCookedness] = useState("");
     const [tone, setTone] = useState("");
 
-    const [decrementNumber, setdecrementNumber] = useState(numberCustomer);
-    const [addCustomer, setaddCustomer] = useState(false);
-    const [orderTrue, setorderTrue] = useState(true);
-    const [bill, setbill] = useState(false);
-    const [buttonBill, setbuttonBill] = useState(false);
-    const [buttonAddCustomer, setbuttonAddCustomer] = useState(true);
+    const [orderStillAdd, setdecrementNumber] = useState(numberCustomer);
+    const [showComponentAddCustomer, setShowComponentAddCustomer] = useState(false);
+    const [showOrderForm, setShowOrderForm] = useState(true);
+    const [showComponentBill, setshowComponentBill] = useState(false);
+    const [showButtonBill, setShowButtonBill] = useState(false);
+    const [showButtonAddCustomer, setShowButtonAddCustomer] = useState(true);
 
-    function showAddCustomer() {
-        setaddCustomer(true);
-        setorderTrue(false);
-        setbill(false);   
+    //
+    useEffect(() => {
+        if ((orderStillAdd === 0)) {
+            toast.info("all order have been added");
+            setShowButtonAddCustomer(false);
+            setShowButtonBill(true); 
+        } else {
+            toast.info(`Still ${orderStillAdd} orders to add`); 
+        }
+    }, [orderStillAdd]);
+    
+
+    function handleAddCustomer() {
+        setShowComponentAddCustomer(true);
+        setShowOrderForm(false);
+        setshowComponentBill(false);   
     };
 
-    function switchBill(){
-        setaddCustomer(false);
-        setorderTrue(false);
-        setbill(true);
+    function handelSwitchToBill(){
+        setShowComponentAddCustomer(false);
+        setShowOrderForm(false);
+        setshowComponentBill(true);
     }
 
-    function addOrder(e) {
+    function handleAddOrder(e) {
         e.preventDefault();
         
-        if (decrementNumber <= 0) {
-            toast.info("all order have been added", { autoClose: false });
-            setbuttonAddCustomer(false);
-            setbuttonBill(true);
+        if (orderStillAdd <= 0) {
+            setShowButtonAddCustomer(false);
+            setShowButtonBill(true);
         } else {
             //patch the order item into the order
             axios({
@@ -101,22 +112,11 @@ const AddOrders = ({TheOrderId, TheCustomerId, numberCustomer}) => {
 
             setdecrementNumber((oldNumber) => oldNumber - 1);
         }
-
-        counter(decrementNumber-1);
     }
 
-    const counter = decrementNumber => {
-        if ((decrementNumber === 0)) {
-            toast.info("all order have been added", { autoClose: true });
-            setbuttonAddCustomer(false);
-            setbuttonBill(true); 
-        } else {
-            toast.info(`Still ${decrementNumber} orders to add`, { autoClose: true }); 
-        }
-    }
 
     //changing the cooking level state
-    const handleChange = levelCookedness =>{
+    const handleChangeLevel = levelCookedness =>{
         setLevelCookedness(levelCookedness);
         console.log(levelCookedness.value);
     }
@@ -131,7 +131,7 @@ const AddOrders = ({TheOrderId, TheCustomerId, numberCustomer}) => {
         <StyleAddOrder>
             {
                 //appears when we want to add another customer in the order
-                addCustomer &&
+                showComponentAddCustomer &&
                 <div >
                     {
                             <AddCustomers 
@@ -144,11 +144,11 @@ const AddOrders = ({TheOrderId, TheCustomerId, numberCustomer}) => {
             }
             {
                 //main screen 
-                orderTrue &&
+                showOrderForm &&
                     <div>
                         <div className="containeur">
                             <h4>New Order</h4>
-                            <form id="form" action="" onSubmit={addOrder}>
+                            <form id="form" action="" onSubmit={handleAddOrder}>
                                 <div className="food">
                                     <div >
                                         <label htmlFor="food">Food</label>
@@ -200,7 +200,7 @@ const AddOrders = ({TheOrderId, TheCustomerId, numberCustomer}) => {
                                         <label>Level cookedness</label>
                                         <Select 
                                             value={levelCookedness}
-                                            onChange={handleChange} 
+                                            onChange={handleChangeLevel} 
                                             options={options}
                                         />
                                     </div>
@@ -218,20 +218,20 @@ const AddOrders = ({TheOrderId, TheCustomerId, numberCustomer}) => {
                                 </div>
                         </form>
                         {
-                            buttonAddCustomer && 
-                            <button id="buttonFlui" onClick={showAddCustomer}>add customer</button>                           
+                            showButtonAddCustomer && 
+                            <button id="buttonFlui" onClick={handleAddCustomer}>add customer</button>                           
                         }
                         
                         {
-                            buttonBill &&
-                            <button id="buttonBill" onClick={switchBill}>Bill --</button>
+                            showButtonBill &&
+                            <button id="buttonBill" onClick={handelSwitchToBill}>Bill --</button>
                         }               
                         </div>
                     </div>
             } 
             {
                 //appears when we click on "bill"
-                bill &&
+                showComponentBill &&
                 <Bill TheOrderId = {TheOrderId} />
             }
         </StyleAddOrder>

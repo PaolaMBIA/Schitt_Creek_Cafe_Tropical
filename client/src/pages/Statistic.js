@@ -35,13 +35,14 @@ const Statistic = () => {
             });
      
         } catch(err){
-            console.log(err);
+            console.log("err.status");
         }
 
         setCanva(true); 
         setMyAppearsButton(false);
         setText(false);
         setMyDisappearsButton(true);
+        console.log(state.orders)
     };
 
     //disappears function

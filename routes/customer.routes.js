@@ -4,7 +4,7 @@ const customer = require('../models/customer.model');
 
 
 router.get('/', customerController.getAllCustomer);
-router.get('/search', customerController.typeInfo);
+router.get('/search/:type', customerController.typeInfo);
 router.get('/:id', customerController.customerInfo);
 router.post('/', customerController.createCustomer);
 

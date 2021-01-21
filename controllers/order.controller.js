@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 
 //get date for the last 144 hours
 let date = new Date();
-date.setHours(date.getHours()-144);
+date.setHours(date.getHours()-2);
 
 //get all the order
 module.exports.getAllorder = (req, res) => {
@@ -131,42 +131,55 @@ module.exports.totalBill = (req, res) => {
 
 //get all the 8-rated overcooked diner did serve in the last 144 hours
 module.exports.dinerInfo = (req, res) => {
-    OrderModel.aggregate([
+    try {
+        OrderModel.aggregate([
             {
-                $match : {
+                $match: {
                     "menu_item.level_cookedness": 8,
-                    createdAt: {$gte: date}
+                    createdAt: { $gte: date }
                 }
             },
             {
-                $project : {
+                $project: {
                     menu_item: {
                         $filter: {
                             input: "$menu_item",
                             as: "menu_item",
-                            cond: {$eq: ["$$menu_item.level_cookedness", 8]}
+                            cond: { $eq: ["$$menu_item.level_cookedness", 8] }
                         }
-                    },   
-                    createdAt: {$dateToString: {'format': '%Y-%m-%d à %Hh%M', 'date': '$createdAt'}}
+                    },
+                    createdAt: { $dateToString: { 'format': '%Y-%m-%d à %Hh%M', 'date': '$createdAt' } }
                 }
             },
             {
                 $addFields: {
-                    total: {$sum: "$menu_item.priceFood" },            
+                    total: { $sum: "$menu_item.priceFood" },
                 }
             }
         ],
 
-        function(err, docs){
-        if(!err)
-            res.send(docs);
-        else 
-            console.log("error: " + err);
-    })
+            (err, docs) => {
+                if (!err) {
+                    if (docs.length === 0) {
+                        res.status(404).send('doc empty: ' + docs)
+                    } else {
+                        res.send(docs)
+                    }
+                }
+                else  { 
+                    res.status(400).send(err)
+                }      
+            }
+        )
+
+    } catch(err) {
+        return res.status(406).send(err);
+    }
+    
 }
 
 //get the median value
-module.exports.meanValue = (req, res) => {
+module.exports.meanValue = (_req, res) => {
     OrderModel.aggregate([
             {
                 $match : {

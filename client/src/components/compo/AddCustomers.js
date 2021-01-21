@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AddOrders from './AddOrders';
 import { StyleAddCustomers } from '../../styles/styled-components/StyleAddCustomers';
 
@@ -20,18 +20,26 @@ const AddCustomers = ({TheOrderId, numberCustomer}) => {
     const [name, setName] = useState("");
     const [type, setType] = useState("");
 
-    const [decrementNumber, setdecrementNumber] = useState(numberCustomer);
+    const [customerStillAdd, setCustomerStillAdd] = useState(numberCustomer);
     const [state, setState] = useState({newCustomer: []});
-    const [addCustomers, setAddCustomer] = useState(true);
-    const [orderButton, setOrderButton] = useState(false);
-    const [addOrder, setAddOrder] = useState(false);
-    //let number = numberCustomer - 1;
+    const [showCustomerForm, setShowCustomerForm] = useState(true);
+    const [showOrderButton, setShowOrderButton] = useState(false);
+    const [showOrderComponent, setShowOrderComponent] = useState(false);
+    
 
-    function addCustomer(e) {
+    //
+    useEffect(() => {
+        (customerStillAdd === 0) ? toast.info(`all customers have been added`)
+            : toast.info(`Still ${customerStillAdd} customers to add`);
+    }, [customerStillAdd]);
+
+
+    //
+    function handleAddCustomer(e) {
         e.preventDefault();
 
-        if (decrementNumber <= 0) {
-            toast.info("all customers have been added", {autoClose:true});
+        if (customerStillAdd <= 0) {
+            toast.info("all customers have been added");
             return;
         } else {
             
@@ -55,31 +63,27 @@ const AddCustomers = ({TheOrderId, numberCustomer}) => {
                 console.log(err);
             });
             
-            setdecrementNumber((oldNumber) => oldNumber - 1);             
-            
+            setCustomerStillAdd((oldNumber) => oldNumber - 1);                    
         }
-        console.log(decrementNumber);
-        (decrementNumber> 1) ? toast.info(`Still ${decrementNumber - 1} customers to add` , {autoClose:true})
-        : toast.info(`all customers have been added`, {autoClose:true});
 
-        setOrderButton(true);
+        setShowOrderButton(true);
     }
 
     //change state
-    function associateOrder(){
-        setAddCustomer(false);
-        setOrderButton(false);
-        setAddOrder(true);
+    function handleChangeState(){
+        setShowCustomerForm(false);
+        setShowOrderButton(false);
+        setShowOrderComponent(true);
     }
 
     return(
         <StyleAddCustomers>
             {
                 //add name and type of customer
-                addCustomers &&
+                showCustomerForm &&
                 <div className="container">
                 <h4>New customer</h4>
-                <form action="" onSubmit={addCustomer}>
+                <form action="" onSubmit={handleAddCustomer}>
                     <label htmlFor="name">Name</label>
                     <input 
                         placeholder="Enter customer" 
@@ -104,14 +108,14 @@ const AddCustomers = ({TheOrderId, numberCustomer}) => {
                 </form>
                 {
                     //is show when the customer was add
-                    orderButton && 
-                    <div id="bout"><button className="button1" onClick={associateOrder}>Associate an order</button></div>
+                    showOrderButton && 
+                    <div id="bout"><button className="button1" onClick={handleChangeState}>Associate an order</button></div>
                 }
             </div>               
             }
             {
                 //is show when we click on "associate an order"
-                addOrder && 
+                showOrderComponent && 
                 state.newCustomer.map(cus => 
                     <AddOrders
                         key={cus.toString()} 

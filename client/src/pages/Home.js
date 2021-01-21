@@ -14,24 +14,24 @@ import '../styles/sass/style.scss';
 import {StyleHome} from '../styles/styled-components/StyleHome';
 
 
-const Home = ({lock}) => {
+const Home = ({lock, id}) => {
     const buttonOpen = useRef(null);
     const modalElement = useRef(null);
 
-    const [number, setNumber] = useState(" ");
+    const [numberCustomer, setNumberCustomer] = useState(" ");
     const [state, setState] = useState({newOrder: []});
-    const [homeFalse, sethomeFalse] = useState(false);
-    const [numberAdd, setnumberAdd] = useState(true);
-    const [homeTrue, sethomeTrue] = useState(true);
+    const [showAddCustomersComponent, setShowAddCustomersComponent] = useState(false);
+    const [showModalComponent, setShowModalComponent] = useState(true);
+    const [showHome, setShowHome] = useState(true);
 
-    function addNumber(e) {
+    function handleAddNumber(e) {
         e.preventDefault();
         
         modalElement.current.style.display = 'none';
 
-        sethomeTrue(false);
-        setnumberAdd(false);
-        sethomeFalse(true);
+        setShowHome(false);
+        setShowModalComponent(false);
+        setShowAddCustomersComponent(true);
 
         // post the number of customer and create the order in database
         axios({
@@ -39,7 +39,7 @@ const Home = ({lock}) => {
             url: `${process.env.REACT_APP_API_URL}api/order/`,
             withCredentials: true,
             data: {
-                nbr_customer: number,
+                nbr_customer: numberCustomer,
             },
         }).then((res) => {
             if(res.data.errors){
@@ -50,22 +50,21 @@ const Home = ({lock}) => {
         }).catch((err)=>{
             console.log(err);
         })
-
-        console.log(number);
     }
+    console.log(id);
 
     return(
         <div>
             {
                 //appears after entering the number of customers
-                homeFalse &&
+                showAddCustomersComponent &&
                 <div >
                     {/* { Add order ID as a props to associate the customer with the order */
                         state.newOrder.map(or => 
                             <AddCustomers 
                                 key={or.toString()}
                                 TheOrderId={or._id}
-                                numberCustomer={number}
+                                numberCustomer={numberCustomer}
                             />)
                     }
                     {/* <AddCustomers TheOrderId = {state.newOrder._id}/> */}
@@ -73,7 +72,7 @@ const Home = ({lock}) => {
             }
             {
                 //main screen
-                homeTrue && 
+                showHome && 
                 <StyleHome>
                     <h3>ROOM</h3>
                     <div className="contain">
@@ -106,15 +105,15 @@ const Home = ({lock}) => {
             }
 
             {/*  modal screen for add the number of customer */
-                numberAdd && 
+                showModalComponent && 
                 <StyleHome>
                     <div id="numberModal" ref={modalElement}>
                         <Modal
-                            addNumber={addNumber}
+                            handleAddNumber={handleAddNumber}
                             buttonOpen={buttonOpen}
                             modalElement={modalElement}
-                            number={number}
-                            setNumber={setNumber}
+                            number={numberCustomer}
+                            setNumber={setNumberCustomer}
                         />
                     </div>
                 </StyleHome>
