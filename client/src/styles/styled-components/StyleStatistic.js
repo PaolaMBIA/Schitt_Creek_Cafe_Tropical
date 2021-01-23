@@ -37,7 +37,7 @@ export const StyleStatistic = styled.div`
         justify-content: space-evenly;
         background: lightgrey;
         height: 500px;
-        width: 1000px;
+        width: 1500px;
     }
 
     .myResults{
@@ -56,8 +56,8 @@ export const StyleStatistic = styled.div`
 
     .myBut{
         background: darkorange;
-        height: 30px;
-        width: 140px;
+        height: 40px;
+        width: 340px;
     }
 
 `;

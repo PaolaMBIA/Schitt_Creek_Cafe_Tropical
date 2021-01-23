@@ -5,6 +5,8 @@ import axios from 'axios';
 import {StyleAddCustomers} from '../styles/styled-components/StyleAddCustomers';
 //import { useHistory } from 'react-router-dom';
 
+// Importing toastify module 
+import {toast} from 'react-toastify'; 
 
 const api = axios.create({
     baseURL: `${process.env.REACT_APP_API_URL}api/customer/search`
@@ -16,16 +18,20 @@ export default function Customers() {
     const [type, setType] = useState("");
 
 
-    const addCustomer = async (e) =>{
+    const addCustomer = (e) =>{
         e.preventDefault();
         
         //query data from database
         try {
-            let data =  await api.get(`/${type}`, {
-            }).then(({data}) => data);
-
-            setState({customers: [data]});
-            console.log(data);
+            api.get(`/${type}`, {
+            }).then((res) => {
+                if(res.data.errors){
+                    toast.error("error get!!");
+                }
+                else{
+                    setState({customers: [res.data]});
+                } 
+            });
         } catch(err){
             console.log(err);
         }
@@ -64,8 +70,7 @@ export default function Customers() {
                         <thead>
                             <tr>
                                 <th>Customers</th>
-                                    <th>Types</th>
-                                    <th>Action</th>
+                                <th>Types</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -74,8 +79,7 @@ export default function Customers() {
                                     cust.map(((type, index) =>
                                         <tr key={index}>
                                             <td>{type.name_customer}</td>
-                                            <td>{type.type_customer}</td>
-                                            
+                                            <td>{type.type_customer}</td>   
                                         </tr>                                            
                                     ))
                                 )

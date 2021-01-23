@@ -54,7 +54,7 @@ const AddCustomers = ({TheOrderId, numberCustomer}) => {
                 },
             }).then((res) => {
                 if(res.data.errors){
-                    toast.error("problem!!", {autoClose:true});
+                    toast.error("error post!!");
                 }
                 else{
                     setState({newCustomer: [res.data]})

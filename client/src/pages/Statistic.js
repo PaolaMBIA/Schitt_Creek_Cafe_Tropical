@@ -15,23 +15,24 @@ const api = axios.create({
 });
 
 const Statistic = () => {
-    let totalMoney = 0;
-    const [totaux, setTotaux] = useState("...");
+
+    const [showText, setShowText] = useState(true);
     const [state, setState] = useState({ orders: [] });
-    const [medianV, setMedianV] = useState("...");
+    const [myResults, setMyResults] = useState({median: "", totalEarned: ""});
     const [canva, setCanva] = useState(false);
     const [myAppearsButton, setMyAppearsButton] = useState(true);
     const [myDisappearsButton, setMyDisappearsButton] = useState(false);
-    const [text, setText] = useState(true);
+    const [showTextForTable, setShowTextForTable] = useState(true);
 
     //get data filter by level cookedness
-    function open(){   
+    function handleDiagramData(){   
 
         //query data from database       
         try {
-            api.get('/diner', {
-            }).then(({data}) => {let d= data
-                setState({orders: d});
+            api.get('/diner'
+            ).then(({ data }) => {
+                let myData = data
+                setState({orders: myData});
             });
      
         } catch(err){
@@ -40,13 +41,12 @@ const Statistic = () => {
 
         setCanva(true); 
         setMyAppearsButton(false);
-        setText(false);
+        setShowTextForTable(false);
         setMyDisappearsButton(true);
-        console.log(state.orders)
     };
 
     //disappears function
-    function close() {
+    function handleHideDiagram() {
         setCanva(false); 
         setMyAppearsButton(true);
         setMyDisappearsButton(false);
@@ -59,27 +59,22 @@ const Statistic = () => {
 
 
     //get the median value
-    function median(){   
+    function handleResults(){   
 
         //query data from database       
         try {
             api.get('/mean', {
-            }).then(({data}) => {let d= data
-                setMedianV(d);
+            }).then(({ data }) => {
+                let myData = data
+                setMyResults(myData);
             });
      
         } catch(err){
             console.log(err);
         }
+        setShowText(false)
     };
     
-    //sum the total bill and set the money earned
-    function calculate(){
-        state.orders.map(calcul =>
-            totalMoney += calcul.total
-        );
-        setTotaux(totalMoney);
-    }
 
     //options of canvajs diagram
     const options = {
@@ -115,8 +110,6 @@ const Statistic = () => {
             yValueFormatString: "€##0.00",
             dataPoints: dataPoints
         }],
-
-        
     }
 
     return(
@@ -127,9 +120,9 @@ const Statistic = () => {
                     {
                         myAppearsButton &&
                         <div id="buttons">
-                            <button className="myButtons" onClick={open}>Click here to show the diagram
+                            <button className="myButtons" onClick={handleDiagramData}>Click here to show the diagram
                             {
-                                    text &&
+                                    showTextForTable &&
                                    <p>and fill in the table</p> 
                             }
                             </button>
@@ -146,7 +139,7 @@ const Statistic = () => {
                     {
                         myDisappearsButton &&
                         <div id="buttons">
-                            <button className="myButtons" onClick={close}>Click here to hide the diagram</button>
+                            <button className="myButtons" onClick={handleHideDiagram}>Click here to hide the diagram</button>
                         </div> 
                     }
                 </div>
@@ -187,25 +180,22 @@ const Statistic = () => {
                         <div className="myResults">
                             <div>
                                 {
-                                    <p>Twyla serve __<span>{state.orders.length}</span>__   8-rated overcooked in the last 144 hours </p>
+                                    <p>Twyla serve __<span>{state.orders.length}</span>__   8-rated overcooked in the last 2 months </p>
                                 }
                             </div>
                             <div >
-                                <button className="myBut" onClick={calculate}>Show total</button>
+                                <button className="myBut" onClick={handleResults}>
+                                    {
+                                        showText &&
+                                        <p>Show </p>
+                                    }
+                                    <p>total and median value</p>
+                                </button>
                             </div>
                             
                             <div>
                                 {
-                                    <p>We earned __<span>${totaux}</span>__ </p>
-                                }
-                            </div>
-                                
-                            <div>
-                                <button className="myBut" onClick={median}>Show median Value</button>
-                            </div>
-                            <div>
-                                {
-                                   <p> __<span>${medianV}</span>__ </p>
+                                    <p>We earned __<span>${myResults.totalEarned}</span>__  and the median value is __<span>{ myResults.median}</span>__</p>
                                 }
                             </div>
                         </div>
