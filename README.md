@@ -2,6 +2,8 @@
 
 Ce projet est basé sur la réalisation d'une **API** avec **Node JS** et le **Cluster MongoDB**. Il y'a également une partie Front-end réalisée avec **React JS**
 
+L'objectif étant de pouvoir prendre des commandes des clients et les stocker dans la base de données. Une manipulation de données est également faite dans l'API afin de pouvoir afficher des informations précises.
+
 ## Prérequis :
 - Un éditeur de code (moi j'utilise Visual Studio Code)
 - Node JS
