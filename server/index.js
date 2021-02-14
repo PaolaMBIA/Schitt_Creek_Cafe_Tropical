@@ -27,7 +27,7 @@ app.use('/api/customer', customerRoutes);
 //app.use('/api/menu', menuRoutes);
 app.use('/api/order', orderRoutes);
 
-//ecoutes sur la variable d'environnement 
+
 app.listen(process.env.PORT, () => {
     console.log(`Listening on port ${process.env.PORT}`);
 })

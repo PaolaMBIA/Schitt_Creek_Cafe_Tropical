@@ -7,7 +7,7 @@ require('dotenv').config({path: './config/.env'});
 const ROUND_TO_TWO_DECIMAL = 100;
 const NUMBER_LEVEL_COOKEDNESS = 8;
 
-//get date for the last 144 hours
+//get date for the last 2 months
 let date = new Date();
 date.setMonth(date.getMonth()-2);
 
